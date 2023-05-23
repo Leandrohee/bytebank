@@ -1,6 +1,14 @@
-const grafico = document.getElementById('GraficoDolar');
+// import { listaCotacao } from "./ImprimeCotacao.js";
+import { cotacaoMoeda } from "./ImprimeCotacao.js";
+let workerDolar = new Worker("./app/workerDolar.js");
+let workerEuro = new Worker("./app/workerEuro.js");
 
-  const graficoDolar = new Chart(grafico, {
+
+// GRAFICO DO DOLAR
+
+const graficoD = document.getElementById('GraficoDolar');
+
+  const graficoDolar = new Chart(graficoD, {
     type: 'line',
     data: {
       labels: [],
@@ -12,19 +20,30 @@ const grafico = document.getElementById('GraficoDolar');
     },
   });
 
- async function conectaApi (){
-    const respostaApi = await fetch ('https://economia.awesomeapi.com.br/last/USD-BRL');
-    const respostaApiJson = await respostaApi.json()
-    var precoDolar = respostaApiJson.USDBRL.ask
-    const horarioAtual = pegaData();
-    addData(graficoDolar,horarioAtual,precoDolar)
-  }
+// GRAFICO DO EURO
 
-setInterval(conectaApi,5000);
+const graficoE = document.getElementById('GraficoEuro');
+
+  const graficoEuro = new Chart(graficoE, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Preço do Euro',
+        data: [],
+        borderWidth: 1
+      }]
+    },
+  });
+
+ // FUNCOES GENERICAS  
 
 function pegaData(){
     const data = new Date();
-    const horarioAtual = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
+    let horas = (data.getHours() < 10) ? (`0${data.getHours()}`) : (data.getHours());
+    let minutos = (data.getMinutes() < 10) ? (`0${data.getMinutes()}`) : (data.getMinutes());
+
+    const horarioAtual = `${horas}:${minutos}:${data.getSeconds()}`
     return horarioAtual;
 }
 
@@ -35,3 +54,25 @@ function addData(grafico, legenda, precoDolar) {
     });
     grafico.update();
 }
+
+//FUNCAO ESPECIFICA DOLAR
+
+workerDolar.postMessage('usd');
+workerDolar.addEventListener('message',(event)=>{
+    var precoDolar = event.data
+    const horarioAtual = pegaData();
+    addData(graficoDolar,horarioAtual,precoDolar)
+    // listaCotacao('Dolar',precoDolar);
+    cotacaoMoeda('dolar',precoDolar);
+})
+
+//FUNCAO ESPECIFICA EURO
+
+workerEuro.postMessage('eur');
+workerEuro.addEventListener('message',(event)=>{
+    var precoEuro = event.data
+    const horarioAtual = pegaData();
+    addData(graficoEuro,horarioAtual,precoEuro)
+    // listaCotacao('Euro',precoEuro);
+    cotacaoMoeda('euro',precoEuro);
+})

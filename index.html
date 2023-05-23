@@ -46,12 +46,28 @@
       </div>
     </article>
 
+    <article class="dadosDolar">
+      <div class="grafico">
+        <div class="grafico__titulo">
+          <span class="grafico__ilustracao-euro"></span>
+          <h2>Variação da moeda desde o login</h2>
+        </div>
+        <canvas id="GraficoEuro"></canvas>
+      </div>
+
+      <div class="investimentos">
+        <h2>Valores da moeda</h2>
+        <ul class="investimentos__lista" id="euro" data-lista>
+        </ul>
+      </div>
+    </article>
+
     <footer class="rodape">
       <p>Dashboard - Desenvolvido por Alura</p>
     </footer>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/app/script.js"></script>
+  <script type="module" src="/app/script.js"></script>
 </body>
 
 </html>
