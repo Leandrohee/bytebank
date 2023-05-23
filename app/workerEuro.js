@@ -6,5 +6,5 @@ async function conectaApi (){
 
   addEventListener('message', () => {
     conectaApi();
-    setInterval(conectaApi,5000);
+    setInterval(conectaApi,30000);
   })
